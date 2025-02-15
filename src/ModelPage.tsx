@@ -29,6 +29,9 @@ const ModelPage = () => {
   const [filter, setFilter] = useState<string>('');
   const[datas,setdata]=useState<Model []>(data)
   const[change,setChange]=useState <boolean>(false)
+  const [isOpen, setIsOpen] = useState(true);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
   
   function boxopen(){
     setChange(!change)
@@ -37,42 +40,20 @@ const ModelPage = () => {
    setdata(perv=>[dat[0],...perv])
    boxopen()
   }
+  
      
   const filteredData = datas.filter(item =>
     item.model_name.toLowerCase().includes(filter.toLowerCase())
   );
-  return (<>
-    <AventisiaHeader/>
+  return (< div className="mt-20">
+    <AventisiaHeader toggleSidebar={toggleSidebar} isOpen={isOpen} />
     
     <div className="bg-gray-100 min-h-screen flex">
-      {/* Sidebar */}
-      <Sidebar/>
-      {/* <aside className="w-64 bg-[#1E1B4B] text-white p-4 space-y-6">
-        <h1 className="text-2xl font-bold">Aventisia</h1>
-        <nav className="space-y-3">
-          <p className="font-semibold">Model Library</p>
-          <p className="text-gray-300">Label Data</p>
-          <p className="text-gray-300">Model</p>
-          <p className="text-gray-300">Test</p>
-          <p className="text-gray-300">Setting</p>
-          <p className="text-gray-300">Support</p>
-        </nav>
-      </aside> */}
-
-      {/* Main Content */}
+     
+      <Sidebar isOpen={isOpen} />
+      
       <main className="flex-1 p-6  bg-white rounded-xl shadow-md">
-        {/* <header className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Model Library</h2>
-          <div className="flex gap-2">
-            <Input placeholder="Search by Name, ID" className="w-64" />
-            <Button variant="outline">
-              <Filter size={16} className="mr-2" /> Filters
-            </Button>
-            <Button className="bg-[#4F46E5] text-white" onClick={boxopen}>
-              <Plus size={16} className="mr-2" /> Create New Model
-            </Button>
-          </div>
-        </header> */}
+       
 
 <div className="p-4 ">
       <div className="flex justify-between items-center mb-4">
@@ -83,7 +64,7 @@ const ModelPage = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Search Input */}
+      
         <div className="relative flex-1">
           <FaSearch className="absolute top-3 left-3 text-gray-400" />
           <input
@@ -95,19 +76,17 @@ const ModelPage = () => {
           />
         </div>
 
-        {/* Filter Button */}
+      
         <button className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200">
           <FilterIcon size={16} /> Filters
         </button>
 
-        {/* Date Picker */}
         <button className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200">
           <CalendarIcon size={16} /> April 11 - April 24
         </button>
       </div>
     </div>
 
-        {/* Table Section */}
         <Card className="my-0">
   <CardContent>
     <Table className="my-6">
@@ -123,14 +102,14 @@ const ModelPage = () => {
         </tr>
       </thead>
       <tbody>
-        { filteredData.slice((pageChange-1)*7, pageChange*7).map((item, index) => (
+        { filteredData.slice((pageChange-1)*6, pageChange*6).map((item, index) => (
           <tr key={index} className="hover:bg-gray-50 border-b">
             <td className="px-6 py-4">
               <p className="font-semibold">{item.model_name}</p>
               <p className="text-sm text-gray-500">{item.id}</p>
             </td>
             <td className="px-6 py-4">{item.model_type}</td>
-            <td className="px-6 py-4">{item.Description}</td>
+            <td className="px-6 py-4">{item.Description.length>10?`${item.Description.slice(0, 10)}...`:item.Description }</td>
             <td className="px-6 py-4">{item.created_date}</td>
             <td className="px-6 py-4">{item.updated_date}</td>
             <td className="px-6 py-4">
@@ -139,7 +118,9 @@ const ModelPage = () => {
               </span>
             </td>
             <td className="px-6 py-4">
-              <Button variant="ghost">...</Button>
+              <Button variant="ghost"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+  <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+</svg></Button>
             </td>
           </tr>
         ))
@@ -149,13 +130,12 @@ const ModelPage = () => {
   </CardContent>
 </Card>
 
-        {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
-          <p className="text-sm text-gray-500">Showing 1 to 10 of 97 results</p>
+          <p className="text-sm text-gray-500">Showing 1 to 6 of  {filteredData.length}</p>
           <Pagination 
         onPageChange={setPageChange} 
         totalResults={filteredData.length} 
-        resultsPerPage={7} 
+        resultsPerPage={6} 
         currentPage={pageChange} 
       />
         </div>
@@ -163,7 +143,7 @@ const ModelPage = () => {
     </div>
     {change===true && <ModelCreationModal onClose={boxopen} Modeldata={adddata}/> }
     
-    </>
+    </div>
   );
 };
 
